@@ -29,6 +29,7 @@ file(
 source_group("" FILES ${SRC})
 
 add_library(qoi SHARED ${SRC})
+set_target_properties(qoi PROPERTIES CXX_STANDARD 17)
 set_target_properties(qoi PROPERTIES SUFFIX ".bmi")
 target_link_libraries(qoi ${MaxSDK_LIBRARIES})
 include_directories(${MaxSDK_INCLUDE_DIR} qoi)
