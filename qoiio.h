@@ -30,7 +30,44 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef QM_QOIIO_H
 #define QM_QOIIO_H
 
+#include <max.h>
+#include <istdplug.h>
+#include <bmmlib.h>
+#include <iparamb2.h>
+
+#ifdef _MSC_VER
+#define SEV_DECL_EXPORT __declspec(dllexport)
+#define SEV_DECL_IMPORT __declspec(dllimport)
+#else
+#define SEV_DECL_EXPORT
+#define SEV_DECL_IMPORT
+#endif
+
+#if defined(QM_LIB_EXPORT)
+#define QM_EXPORT __declspec(dllexport)
+#else
+#define QM_EXPORT __declspec(dllimport)
+#endif
+
 #define QOI_ClassID Class_ID(0x5dd872f0, 0x664308eb)
+
+class BitmapIO_QOI : public BitmapIO
+{
+public:
+	QM_EXPORT BitmapIO_QOI();
+	QM_EXPORT virtual ~BitmapIO_QOI();
+
+	QM_EXPORT virtual int ExtCount() override;
+	QM_EXPORT virtual const MCHAR *Ext(int n) override;
+
+	QM_EXPORT virtual const MCHAR *LongDesc() override;
+	QM_EXPORT virtual const MCHAR *ShortDesc() override;
+	QM_EXPORT virtual const MCHAR *AuthorName() override;
+	QM_EXPORT virtual const MCHAR *CopyrightMessage() override;
+	QM_EXPORT virtual UINT Version() override;
+
+	QM_EXPORT virtual int Capability() override;
+};
 
 #endif /* QM_QOIIO_H */
 

@@ -85,12 +85,6 @@ constexpr decltype(nullptr) null = nullptr;
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
-// 3ds Max SDK
-#include <max.h>
-#include <istdplug.h>
-#include <bmmlib.h>
-#include <iparamb2.h>
-
 #endif /* __cplusplus */
 
 #endif /* QM_PLATFORM_H */

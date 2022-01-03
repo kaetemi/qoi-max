@@ -29,6 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "platform.h"
 #include "qoirc.h"
+
+#define QM_LIB_EXPORT
 #include "qoiio.h"
 
 #define QOI_NO_STDIO
@@ -113,6 +115,56 @@ DLLEXPORT ULONG LibVersion()
 DLLEXPORT ULONG CanAutoDefer()
 {
 	return 1;
+}
+
+/* Bitmap I/O */
+
+BitmapIO_QOI::BitmapIO_QOI()
+{
+}
+
+BitmapIO_QOI::~BitmapIO_QOI()
+{
+}
+
+int BitmapIO_QOI::ExtCount()
+{
+	return 1;
+}
+
+const MCHAR *BitmapIO_QOI::Ext(int n)
+{
+	return _T("qoi");
+}
+
+const MCHAR *BitmapIO_QOI::LongDesc()
+{
+	return _T("Quite OK Image Format");
+}
+
+const MCHAR *BitmapIO_QOI::ShortDesc()
+{
+	return _T("QOI");
+}
+
+const MCHAR *BitmapIO_QOI::AuthorName()
+{
+	return _T("Jan BOON (Kaetemi) <jan.boon@kaetemi.be>");
+}
+
+const MCHAR *BitmapIO_QOI::CopyrightMessage()
+{
+	return _T("Copyright (C) 2022 Jan Boon; Copyright (C) 2021 Dominic Szablewski");
+}
+
+UINT BitmapIO_QOI::Version()
+{
+	return 100; // 1.00
+}
+
+int BitmapIO_QOI::Capability()
+{
+	return BMMIO_READER | BMMIO_WRITER | BMMIO_EXTENSION | BMMIO_CONTROLWRITE;
 }
 
 /* end of file */
