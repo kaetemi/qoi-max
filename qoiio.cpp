@@ -167,4 +167,47 @@ int BitmapIO_QOI::Capability()
 	return BMMIO_READER | BMMIO_WRITER | BMMIO_EXTENSION | BMMIO_CONTROLWRITE;
 }
 
+INT_PTR CALLBACK AboutCtrlDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		CenterWindow(hWnd, GetParent(hWnd));
+		SetWindowText(GetDlgItem(hWnd, IDC_LICENSE), _T(
+			"Permission is hereby granted, free of charge, to any person obtaining a copy of\r\n"
+			"this software and associated documentation files(the \"Software\"), to deal in\r\n"
+			"the Software without restriction, including without limitation the rights to\r\n"
+			"use, copy, modify, merge, publish, distribute, sublicense, and / or sell copies\r\n"
+			"of the Software, and to permit persons to whom the Software is furnished to do\r\n"
+			"so, subject to the following conditions :\r\n"
+			"The above copyright notice and this permission notice shall be included in all\r\n"
+			"copies or substantial portions of the Software.\r\n"
+			"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\r\n"
+			"IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\r\n"
+			"FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE\r\n"
+			"AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\r\n"
+			"LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\r\n"
+			"OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\r\n"
+			"SOFTWARE."
+		));
+		return 1;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDOK:
+		case IDCANCEL:
+			EndDialog(hWnd, 1);
+			break;
+		}
+		return 1;
+	}
+	return 0;
+}
+
+void BitmapIO_QOI::ShowAbout(HWND hWnd)
+{
+	DialogBoxParam(s_HInstance, MAKEINTRESOURCE(IDD_QOI_ABOUT),
+	    hWnd, (DLGPROC)AboutCtrlDlgProc, (LPARAM)0);
+}
+
 /* end of file */

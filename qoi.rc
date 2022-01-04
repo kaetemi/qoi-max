@@ -48,9 +48,48 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// String Table
+// Dialog
 //
 
+IDD_QOI_ABOUT DIALOGEX 0, 0, 375, 236
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "About QOI"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,318,216,50,14
+    LTEXT           "QOI Bitmap I/O for 3ds Max\r\nCopyright (C) 2022  Jan BOON (Kaetemi) <jan.boon@kaetemi.be>\r\nAll rights reserved.",IDC_COPY_PLUGIN,12,18,308,24
+    LTEXT           "QOI - The ""Quite OK Image"" format for fast, lossless image compression\r\nCopyright(c) 2021 Dominic Szablewski",IDC_COPY_QOI,12,60,348,18
+    GROUPBOX        "",IDC_STATIC,6,6,360,42
+    GROUPBOX        "",IDC_STATIC,6,48,360,162
+    EDITTEXT        IDC_LICENSE,12,84,348,120,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_QOI_ABOUT, DIALOG
+    BEGIN
+        RIGHTMARGIN, 363
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_QOI_ABOUT AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

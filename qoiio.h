@@ -67,6 +67,8 @@ public:
 	QM_EXPORT virtual UINT Version() override;
 
 	QM_EXPORT virtual int Capability() override;
+
+	QM_EXPORT virtual void ShowAbout(HWND hWnd) override;
 };
 
 #endif /* QM_QOIIO_H */
