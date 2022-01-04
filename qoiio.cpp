@@ -249,7 +249,7 @@ BMMRES BitmapIO_QOI::GetImageInfo(BitmapInfo *pbi)
 	});
 
 	// Read header
-	static_assert(QOI_HEADER_SIZE == 14);
+	static_assert(QOI_HEADER_SIZE == 14, "Header size mismatch");
 	unsigned char header[QOI_HEADER_SIZE];
 	if (fread(header, 1, QOI_HEADER_SIZE, fi) != QOI_HEADER_SIZE)
 		return BMMRES_INVALIDFORMAT;

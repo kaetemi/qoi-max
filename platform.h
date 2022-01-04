@@ -66,11 +66,6 @@ using std::min;
 // C++
 #ifdef __cplusplus
 
-// Require C++17
-#if defined(_MSC_VER) && (!defined(_HAS_CXX17) || !_HAS_CXX17)
-static_assert(false, "C++17 is required");
-#endif
-
 // Define null, with color highlight
 #ifndef null
 constexpr decltype(nullptr) null = nullptr;
@@ -78,12 +73,8 @@ constexpr decltype(nullptr) null = nullptr;
 #endif
 
 // Include STL string and allow string literals.
-// Always use sv suffix when declaring string literals.
-// Ideally, assign them as `constexpr std::string_view`.
 #include <string>
-#include <string_view>
 using namespace std::string_literals;
-using namespace std::string_view_literals;
 
 // Functional
 #include <functional>
