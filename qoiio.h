@@ -27,6 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#pragma once
 #ifndef QM_QOIIO_H
 #define QM_QOIIO_H
 
@@ -34,14 +35,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <istdplug.h>
 #include <bmmlib.h>
 #include <iparamb2.h>
-
-#ifdef _MSC_VER
-#define SEV_DECL_EXPORT __declspec(dllexport)
-#define SEV_DECL_IMPORT __declspec(dllimport)
-#else
-#define SEV_DECL_EXPORT
-#define SEV_DECL_IMPORT
-#endif
 
 #if defined(QM_LIB_EXPORT)
 #define QM_EXPORT __declspec(dllexport)
