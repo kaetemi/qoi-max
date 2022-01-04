@@ -118,7 +118,8 @@ DLLEXPORT ULONG CanAutoDefer()
 {
 	return 1;
 }
-}
+
+} /* extern "C" */
 
 /* Bitmap I/O */
 
