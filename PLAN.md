@@ -1,3 +1,4 @@
 - Add license of the plugin to the about dialog as well.
 - Configuration dialog to switch between auto/rgba/rgb (0/4/3 channels) for saving.
 - Specialize (fork) the qoi library to load straight into and from the 3ds Max line buffers.
+- CI.
