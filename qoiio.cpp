@@ -118,7 +118,6 @@ DLLEXPORT ULONG CanAutoDefer()
 {
 	return 1;
 }
-
 }
 
 /* Bitmap I/O */
@@ -281,6 +280,8 @@ BMMRES BitmapIO_QOI::GetImageInfo(BitmapInfo *pbi)
 	pbi->SetWidth(desc.width);
 	pbi->SetHeight(desc.height);
 	pbi->SetType(desc.channels == 3 ? BMM_TRUE_24 : BMM_TRUE_32);
+	if (desc.channels == 4)
+		pbi->SetFlags(MAP_HAS_ALPHA);
 	pbi->SetAspect(1.0f);
 	pbi->SetGamma(desc.colorspace == QOI_SRGB ? 2.2f : 1.0f);
 	pbi->SetFirstFrame(0);
@@ -291,7 +292,124 @@ BMMRES BitmapIO_QOI::GetImageInfo(BitmapInfo *pbi)
 
 BitmapStorage *BitmapIO_QOI::Load(BitmapInfo *pbi, Bitmap *pmap, BMMRES *status)
 {
-	return NULL;
+	*status = BMMRES_SUCCESS;
+
+	// Open file
+	FILE *fi = _tfopen(pbi->Name(), _T("rb"));
+	if (!fi)
+	{
+		*status = BMMRES_FILENOTFOUND;
+		return null;
+	}
+	OnExit closeInput([&]() -> void {
+		if (fi)
+		{
+			fclose(fi);
+			fi = null;
+		}
+	});
+
+	// File length
+	long size;
+	fseek(fi, 0, SEEK_END);
+	size = ftell(fi);
+	if (size <= 0)
+	{
+		*status = BMMRES_IOERROR;
+		return null;
+	}
+	fseek(fi, 0, SEEK_SET);
+
+	// Read file
+	void *data;
+	data = malloc(size);
+	if (!data)
+	{
+		*status = BMMRES_MEMORYERROR;
+		return null;
+	}
+	OnExit freeData([&]() -> void {
+		free(data);
+		data = null;
+	});
+	size_t bytes_read = fread(data, 1, size, fi);
+	fclose(fi);
+	fi = null;
+
+	// Decode
+	qoi_desc desc;
+	unsigned char *pixels = (unsigned char *)qoi_decode(data, bytes_read, &desc, 0);
+	OnExit freePixels([&]() -> void {
+		QOI_FREE(pixels);
+		pixels = null;
+	});
+
+	// Commit info
+	pbi->SetWidth(desc.width);
+	pbi->SetHeight(desc.height);
+	pbi->SetType(desc.channels == 3 ? BMM_TRUE_24 : BMM_TRUE_32);
+	if (desc.channels == 4)
+		pbi->SetFlags(MAP_HAS_ALPHA);
+	pbi->SetAspect(1.0f);
+	pbi->SetGamma(desc.colorspace == QOI_SRGB ? 2.2f : 1.0f);
+	pbi->SetFirstFrame(0);
+	pbi->SetLastFrame(0);
+
+	// Create storage
+	BitmapStorage *s = BMMCreateStorage(pmap->Manager(), BMM_TRUE_32);
+	OnExit abortStorage([&]() -> void {
+		if (s)
+		{
+			delete s;
+			s = null;
+		}
+	});
+	if (!s)
+	{
+		*status = BMMRES_CANTSTORAGE;
+		return null;
+	}
+	if (!s->Allocate(pbi, pmap->Manager(), BMM_OPEN_R))
+	{
+		*status = BMMRES_MEMORYERROR;
+		return null;
+	}
+
+	// Put pixels
+	BMM_Color_64 *line = (BMM_Color_64 *)calloc(desc.width, sizeof(BMM_Color_64));
+	OnExit freeLine([&]() -> void {
+		free(line);
+		line = null;
+	});
+	ptrdiff_t ip = 0;
+	for (unsigned int y = 0; y < desc.height; ++y)
+	{
+		if (desc.channels == 4)
+		{
+			for (unsigned int x = 0; x < desc.width; ++x, ip += 4)
+			{
+				line[x].r = ((uint16_t)pixels[ip + 0]) << 8;
+				line[x].g = ((uint16_t)pixels[ip + 1]) << 8;
+				line[x].b = ((uint16_t)pixels[ip + 2]) << 8;
+				line[x].a = ((uint16_t)pixels[ip + 3]) << 8;
+			}
+		}
+		else
+		{
+			for (unsigned int x = 0; x < desc.width; ++x, ip += 3)
+			{
+				line[x].r = ((uint16_t)pixels[ip + 0]) << 8;
+				line[x].g = ((uint16_t)pixels[ip + 1]) << 8;
+				line[x].b = ((uint16_t)pixels[ip + 2]) << 8;
+			}
+		}
+		s->PutPixels(0, y, desc.width, line);
+	}
+
+	// Commit result
+	BitmapStorage *res = s;
+	s = null;
+	return res;
 }
 
 /* end of file */
