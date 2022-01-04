@@ -70,7 +70,7 @@ class QOIClassDesc : public ClassDesc2
 {
 public:
 	int IsPublic() { return 1; }
-	void *Create(BOOL loading = FALSE) { return null /* new BitmapIO_QOI() */; }
+	void *Create(BOOL loading = FALSE) { return new BitmapIO_QOI(); }
 	const TCHAR *ClassName() { return _T("QOI"); }
 	const TCHAR *NonLocalizedClassName() { return _T("QOI"); }
 	SClass_ID SuperClassID() { return BMM_IO_CLASS_ID; }
@@ -83,6 +83,8 @@ public:
 static QOIClassDesc QOIDesc;
 
 /* Interface */
+
+extern "C" {
 
 DLLEXPORT const TCHAR *LibDescription()
 {
@@ -115,6 +117,8 @@ DLLEXPORT ULONG LibVersion()
 DLLEXPORT ULONG CanAutoDefer()
 {
 	return 1;
+}
+
 }
 
 /* Bitmap I/O */
@@ -215,7 +219,7 @@ BOOL BitmapIO_QOI::ShowControl(HWND hWnd, DWORD flag)
 
 DWORD BitmapIO_QOI::EvaluateConfigure()
 {
-	return FALSE; // TODO
+	return 4; // TODO
 }
 
 BOOL BitmapIO_QOI::LoadConfigure(void *ptr, DWORD piDataSize)

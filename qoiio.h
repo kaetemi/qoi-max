@@ -49,7 +49,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define QM_EXPORT __declspec(dllimport)
 #endif
 
-#define QOI_ClassID Class_ID(0x5dd872f0, 0x664308eb)
+#define QOI_ClassID Class_ID(0x6198322f, 0x56080a14)
 
 class BitmapIO_QOI : public BitmapIO
 {
