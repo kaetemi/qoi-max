@@ -78,6 +78,10 @@ public:
 	QM_EXPORT virtual BMMRES GetImageInfo(BitmapInfo *pbi) override;
 
 	QM_EXPORT virtual BitmapStorage *Load(BitmapInfo *pbi, Bitmap *pmap, BMMRES *status) override;
+
+	QM_EXPORT virtual BMMRES OpenOutput(BitmapInfo *pbi, Bitmap *pmap) override;
+	QM_EXPORT virtual BMMRES Write(int frame) override;
+	QM_EXPORT virtual int Close(int flag) override;
 };
 
 #endif /* QM_QOIIO_H */

@@ -412,4 +412,137 @@ BitmapStorage *BitmapIO_QOI::Load(BitmapInfo *pbi, Bitmap *pmap, BMMRES *status)
 	return res;
 }
 
+BMMRES BitmapIO_QOI::OpenOutput(BitmapInfo *pbi, Bitmap *pmap)
+{
+	if (openMode != BMM_NOT_OPEN)
+		return ProcessImageIOError(pbi, BMMRES_INTERNALERROR);
+
+	if (!pmap)
+		return ProcessImageIOError(pbi, BMMRES_INTERNALERROR);
+
+	bi.CopyImageInfo(pbi);
+	bi.SetUpdateWindow(pbi->GetUpdateWindow());
+	if (bi.GetCustomGamma() != 1.0f || (bi.Gamma() != 1.0f && bi.Gamma() != 2.2f))
+		bi.SetCustomGamma(2.2f);
+
+	map = pmap;
+	openMode = BMM_OPEN_W;
+
+	return BMMRES_SUCCESS;
+}
+
+BMMRES BitmapIO_QOI::Write(int frame)
+{
+	if (openMode != BMM_OPEN_W)
+		return ProcessImageIOError(&bi, BMMRES_INTERNALERROR);
+
+	if (!map)
+		return (ProcessImageIOError(&bi, BMMRES_INTERNALERROR));
+
+	openMode = BMM_OPEN_W;
+
+	// Get filename
+	TCHAR filename[MAX_PATH];
+	if (frame == BMM_SINGLEFRAME)
+		_tcscpy(filename, bi.Name());
+	else if (!BMMCreateNumberedFilename(bi.Name(), frame, filename))
+		return ProcessImageIOError(&bi, BMMRES_NUMBEREDFILENAMEERROR);
+	MaxSDK::Util::Path storageNamePath(filename);
+	storageNamePath.SaveBaseFile();
+
+	// Open file
+	FILE *fo = _tfopen(filename, _T("wb"));
+	if (!fo)
+		return ProcessImageIOError(&bi, BMMRES_IOERROR);
+	OnExit closeOutput([&]() -> void {
+		if (fo)
+		{
+			fclose(fo);
+			fo = null;
+		}
+	});
+
+	// Header
+	qoi_desc desc;
+	desc.width = map->Width();
+	desc.height = map->Height();
+	desc.channels = map->HasAlpha() ? 4 : 3;
+	desc.colorspace = OutputGamma() == 1.0f ? QOI_LINEAR : QOI_SRGB;
+
+	// Allocate memory
+	unsigned char *pixels = (unsigned char *)malloc(desc.width * desc.height * desc.channels);
+	if (!pixels)
+		return BMMRES_MEMORYERROR;
+	OnExit freePixels([&]() -> void {
+		free(pixels);
+		pixels = null;
+	});
+
+	// Get pixels
+	BMM_Color_32 *line = (BMM_Color_32 *)calloc(desc.width, sizeof(BMM_Color_32));
+	OnExit freeLine([&]() -> void {
+		if (line)
+		{
+			free(line);
+			line = null;
+		}
+	});
+	ptrdiff_t ip = 0;
+	for (unsigned int y = 0; y < desc.height; ++y)
+	{
+		if (!GetDitheredOutputPixels(0, y, desc.width, line))
+		{
+			return BMMRES_IOERROR;
+		}
+		if (desc.channels == 4)
+		{
+			for (unsigned int x = 0; x < desc.width; ++x, ip += 4)
+			{
+				pixels[ip + 0] = line[x].r;
+				pixels[ip + 1] = line[x].g;
+				pixels[ip + 2] = line[x].b;
+				pixels[ip + 3] = line[x].a;
+			}
+		}
+		else
+		{
+			for (unsigned int x = 0; x < desc.width; ++x, ip += 3)
+			{
+				pixels[ip + 0] = line[x].r;
+				pixels[ip + 1] = line[x].g;
+				pixels[ip + 2] = line[x].b;
+			}
+		}
+	}
+	free(line);
+	line = null;
+
+	// Encode
+	int size;
+	unsigned char *encoded = (unsigned char *)qoi_encode(pixels, &desc, &size);
+	if (!encoded)
+	{
+		return BMMRES_IOERROR;
+	}
+	OnExit freeEncoded([&]() -> void {
+		QOI_FREE(encoded);
+		encoded = null;
+	});
+
+	// Write
+	if (fwrite(encoded, 1, size, fo) != size)
+	{
+		return BMMRES_IOERROR;
+	}
+
+	return BMMRES_SUCCESS;
+}
+
+int BitmapIO_QOI::Close(int flag)
+{
+	openMode = BMM_NOT_OPEN;
+	map = null;
+	return 1;
+}
+
 /* end of file */
