@@ -89,7 +89,10 @@ using namespace std::string_view_literals;
 #include <functional>
 struct OnExit
 {
-	OnExit(std::function<void()> &&f) : f(f) {}
+	OnExit(std::function<void()> &&f)
+	    : f(f)
+	{
+	}
 	~OnExit() { f(); }
 	std::function<void()> f;
 };
