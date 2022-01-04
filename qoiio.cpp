@@ -287,6 +287,7 @@ BMMRES BitmapIO_QOI::GetImageInfo(BitmapInfo *pbi)
 	pbi->SetGamma(desc.colorspace == QOI_SRGB ? 2.2f : 1.0f);
 	pbi->SetFirstFrame(0);
 	pbi->SetLastFrame(0);
+	bi.CopyImageInfo(pbi);
 
 	return status;
 }
@@ -355,6 +356,7 @@ BitmapStorage *BitmapIO_QOI::Load(BitmapInfo *pbi, Bitmap *pmap, BMMRES *status)
 	pbi->SetGamma(desc.colorspace == QOI_SRGB ? 2.2f : 1.0f);
 	pbi->SetFirstFrame(0);
 	pbi->SetLastFrame(0);
+	bi.CopyImageInfo(pbi);
 
 	// Create storage
 	BitmapStorage *s = BMMCreateStorage(pmap->Manager(), BMM_TRUE_32);
