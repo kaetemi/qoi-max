@@ -85,6 +85,15 @@ constexpr decltype(nullptr) null = nullptr;
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
+// Functional
+#include <functional>
+struct OnExit
+{
+	OnExit(std::function<void()> &&f) : f(f) {}
+	~OnExit() { f(); }
+	std::function<void()> f;
+};
+
 #endif /* __cplusplus */
 
 #endif /* QM_PLATFORM_H */

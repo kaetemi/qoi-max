@@ -164,7 +164,7 @@ UINT BitmapIO_QOI::Version()
 
 int BitmapIO_QOI::Capability()
 {
-	return BMMIO_READER | BMMIO_WRITER | BMMIO_EXTENSION | BMMIO_CONTROLWRITE;
+	return BMMIO_READER | BMMIO_WRITER | BMMIO_EXTENSION /* | BMMIO_CONTROLWRITE */;
 }
 
 INT_PTR CALLBACK AboutCtrlDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -173,23 +173,21 @@ INT_PTR CALLBACK AboutCtrlDlgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM
 	{
 	case WM_INITDIALOG:
 		CenterWindow(hWnd, GetParent(hWnd));
-		SetWindowText(GetDlgItem(hWnd, IDC_LICENSE), _T(
-			"Permission is hereby granted, free of charge, to any person obtaining a copy of\r\n"
-			"this software and associated documentation files(the \"Software\"), to deal in\r\n"
-			"the Software without restriction, including without limitation the rights to\r\n"
-			"use, copy, modify, merge, publish, distribute, sublicense, and / or sell copies\r\n"
-			"of the Software, and to permit persons to whom the Software is furnished to do\r\n"
-			"so, subject to the following conditions :\r\n"
-			"The above copyright notice and this permission notice shall be included in all\r\n"
-			"copies or substantial portions of the Software.\r\n"
-			"THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\r\n"
-			"IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\r\n"
-			"FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE\r\n"
-			"AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\r\n"
-			"LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\r\n"
-			"OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\r\n"
-			"SOFTWARE."
-		));
+		SetWindowText(GetDlgItem(hWnd, IDC_LICENSE), _T("Permission is hereby granted, free of charge, to any person obtaining a copy of\r\n"
+		                                                "this software and associated documentation files(the \"Software\"), to deal in\r\n"
+		                                                "the Software without restriction, including without limitation the rights to\r\n"
+		                                                "use, copy, modify, merge, publish, distribute, sublicense, and / or sell copies\r\n"
+		                                                "of the Software, and to permit persons to whom the Software is furnished to do\r\n"
+		                                                "so, subject to the following conditions :\r\n"
+		                                                "The above copyright notice and this permission notice shall be included in all\r\n"
+		                                                "copies or substantial portions of the Software.\r\n"
+		                                                "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\r\n"
+		                                                "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\r\n"
+		                                                "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE\r\n"
+		                                                "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\r\n"
+		                                                "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\r\n"
+		                                                "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\r\n"
+		                                                "SOFTWARE."));
 		return 1;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
@@ -208,6 +206,88 @@ void BitmapIO_QOI::ShowAbout(HWND hWnd)
 {
 	DialogBoxParam(s_HInstance, MAKEINTRESOURCE(IDD_QOI_ABOUT),
 	    hWnd, (DLGPROC)AboutCtrlDlgProc, (LPARAM)0);
+}
+
+BOOL BitmapIO_QOI::ShowControl(HWND hWnd, DWORD flag)
+{
+	return FALSE; // TODO
+}
+
+DWORD BitmapIO_QOI::EvaluateConfigure()
+{
+	return FALSE; // TODO
+}
+
+BOOL BitmapIO_QOI::LoadConfigure(void *ptr, DWORD piDataSize)
+{
+	return FALSE; // TODO
+}
+
+BOOL BitmapIO_QOI::SaveConfigure(void *ptr)
+{
+	return FALSE; // TODO
+}
+
+BMMRES BitmapIO_QOI::GetImageInfo(BitmapInfo *pbi)
+{
+	BMMRES status = BMMRES_SUCCESS;
+
+	// Open file
+	FILE *fi = _tfopen(pbi->Name(), _T("rb"));
+	if (!fi)
+		return BMMRES_FILENOTFOUND;
+
+	OnExit closeInput([&]() -> void {
+		if (fi)
+		{
+			fclose(fi);
+			fi = null;
+		}
+	});
+
+	// Read header
+	static_assert(QOI_HEADER_SIZE == 14);
+	unsigned char header[QOI_HEADER_SIZE];
+	if (fread(header, 1, QOI_HEADER_SIZE, fi) != QOI_HEADER_SIZE)
+		return BMMRES_INVALIDFORMAT;
+	fclose(fi);
+	fi = null;
+
+	// Parse header
+	int p = 0;
+	unsigned int header_magic;
+	qoi_desc desc;
+	header_magic = qoi_read_32(header, &p); // From qoi.h
+	desc.width = qoi_read_32(header, &p);
+	desc.height = qoi_read_32(header, &p);
+	desc.channels = header[p++];
+	desc.colorspace = header[p++];
+
+	// Check header
+	if (desc.width == 0 || desc.height == 0 // From qoi.h
+	    || desc.channels < 3 || desc.channels > 4
+	    || desc.colorspace > 1
+	    || header_magic != QOI_MAGIC
+	    || desc.height >= QOI_PIXELS_MAX / desc.width)
+	{
+		return BMMRES_INVALIDFORMAT;
+	}
+
+	// Commit info
+	pbi->SetWidth(desc.width);
+	pbi->SetHeight(desc.height);
+	pbi->SetType(desc.channels == 3 ? BMM_TRUE_24 : BMM_TRUE_32);
+	pbi->SetAspect(1.0f);
+	pbi->SetGamma(desc.colorspace == QOI_SRGB ? 2.2f : 1.0f);
+	pbi->SetFirstFrame(0);
+	pbi->SetLastFrame(0);
+
+	return status;
+}
+
+BitmapStorage *BitmapIO_QOI::Load(BitmapInfo *pbi, Bitmap *pmap, BMMRES *status)
+{
+	return NULL;
 }
 
 /* end of file */

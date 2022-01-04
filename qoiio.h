@@ -69,6 +69,15 @@ public:
 	QM_EXPORT virtual int Capability() override;
 
 	QM_EXPORT virtual void ShowAbout(HWND hWnd) override;
+	QM_EXPORT virtual BOOL ShowControl(HWND hWnd, DWORD flag) override;
+
+	QM_EXPORT virtual DWORD EvaluateConfigure() override;
+	QM_EXPORT virtual BOOL LoadConfigure(void *ptr, DWORD piDataSize) override;
+	QM_EXPORT virtual BOOL SaveConfigure(void *ptr) override;
+
+	QM_EXPORT virtual BMMRES GetImageInfo(BitmapInfo *pbi) override;
+
+	QM_EXPORT virtual BitmapStorage *Load(BitmapInfo *pbi, Bitmap *pmap, BMMRES *status) override;
 };
 
 #endif /* QM_QOIIO_H */
