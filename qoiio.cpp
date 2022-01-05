@@ -377,6 +377,7 @@ BitmapStorage *BitmapIO_QOI::Load(BitmapInfo *pbi, Bitmap *pmap, BMMRES *status)
 		*status = BMMRES_MEMORYERROR;
 		return null;
 	}
+	s->ClearFlags(MAP_ALPHA_PREMULTIPLIED);
 
 	// Put pixels
 	BMM_Color_64 *line = (BMM_Color_64 *)calloc(desc.width, sizeof(BMM_Color_64));
