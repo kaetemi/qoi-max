@@ -474,7 +474,7 @@ BMMRES BitmapIO_QOI::Write(int frame)
 	desc.colorspace = OutputGamma() == 1.0f ? QOI_LINEAR : QOI_SRGB;
 
 	// Allocate memory
-	unsigned char *pixels = (unsigned char *)malloc(desc.width * desc.height * desc.channels);
+	unsigned char *pixels = (unsigned char *)malloc((size_t)desc.width * desc.height * desc.channels);
 	if (!pixels)
 		return BMMRES_MEMORYERROR;
 	OnExit freePixels([&]() -> void {
