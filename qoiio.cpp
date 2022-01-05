@@ -493,7 +493,7 @@ BMMRES BitmapIO_QOI::Write(int frame)
 	ptrdiff_t ip = 0;
 	for (unsigned int y = 0; y < desc.height; ++y)
 	{
-		if (!GetDitheredOutputPixels(0, y, desc.width, line))
+		if (!GetDitheredOutputPixels(0, y, desc.width, line, FALSE))
 		{
 			return BMMRES_IOERROR;
 		}
