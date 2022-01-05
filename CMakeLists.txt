@@ -2,20 +2,28 @@ project("QOI")
 
 cmake_minimum_required(VERSION 3.18.1 FATAL_ERROR)
 
+if(CMAKE_BUILD_TYPE STREQUAL "")
+  set(CMAKE_BUILD_TYPE
+      "RelWithDebInfo"
+      CACHE
+        STRING
+        "Choose the type of build, options are: Debug, Release, RelWithDebInfo and MinSizeRel."
+        FORCE)
+endif()
+set(MAX_PLUGIN_DIR
+    ""
+    CACHE STRING "Directory to copy 3ds Max plugins to after compilation")
+
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-set(MAX_PLUGIN_DIR
-    ""
-    CACHE STRING "Directory to copy 3ds Max plugins to after compilation")
-
-find_package(MaxSDK REQUIRED)
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+find_package(MaxSDK REQUIRED)
 
 file(
   GLOB
