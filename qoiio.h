@@ -31,10 +31,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef QM_QOIIO_H
 #define QM_QOIIO_H
 
+#pragma warning(push, 0)
 #include <max.h>
 #include <istdplug.h>
 #include <bmmlib.h>
 #include <iparamb2.h>
+#pragma warning(pop)
 
 #if defined(QM_LIB_EXPORT)
 #define QM_EXPORT __declspec(dllexport)
