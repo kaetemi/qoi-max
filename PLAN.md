@@ -3,3 +3,4 @@
 - Specialize (fork) the qoi library to load straight into and from the 3ds Max line buffers.
 - CI.
 - Installer. Include qqoi (TODO) and https://github.com/iOrange/QOIThumbnailProvider.
+- Get version by Git tag, generate header.
