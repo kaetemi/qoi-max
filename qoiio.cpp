@@ -163,7 +163,7 @@ const MCHAR *BitmapIO_QOI::CopyrightMessage()
 
 UINT BitmapIO_QOI::Version()
 {
-	return 100; // 1.00
+	return 101; // 1.01
 }
 
 int BitmapIO_QOI::Capability()
