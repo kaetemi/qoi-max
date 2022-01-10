@@ -2,5 +2,6 @@
 - Configuration dialog to switch between auto/rgba/rgb (0/4/3 channels) for saving.
 - Specialize (fork) the qoi library to load straight into and from the 3ds Max line buffers.
 - CI.
-- Installer. Include qqoi (TODO) and https://github.com/iOrange/QOIThumbnailProvider.
 - Get version by Git tag, generate header.
+- Add https://github.com/iOrange/QOIThumbnailProvider as an optional component in the installer.
+- Add qqoi (TODO) as an optional component.
