@@ -1,4 +1,4 @@
-
+﻿
 SetCompressor lzma
 Name "QOI Bitmap I/O Plugin for 3ds Max"
 OutFile "qoi-max-setup-release.exe"
@@ -6,6 +6,16 @@ RequestExecutionLevel Admin
 XPStyle on
 
 LicenseData "3RDPARTY.md"
+
+!define VERSION "1.01"
+VIAddVersionKey "ProductName" "QOI Bitmap I/O Plugin for 3ds Max"
+VIAddVersionKey "ProductVersion" ${VERSION}
+VIAddVersionKey "CompanyName" "Polyverse OÜ"
+VIAddVersionKey "LegalTrademarks" "Polyverse is a trademark of Polyverse OÜ."
+VIAddVersionKey "LegalCopyright" "Copyright (C) 2022 Jan Boon, Polyverse OÜ; Copyright (C) 2021 Dominic Szablewski"
+VIAddVersionKey "FileDescription" "Setup QOI Bitmap I/O Plugin for 3ds Max"
+VIAddVersionKey "FileVersion" ${VERSION}
+VIProductVersion "${VERSION}.0.0"
 
 Page license
 Page components
