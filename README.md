@@ -2,8 +2,6 @@
 
 Plugin to support the [Quite OK Image Format](https://github.com/phoboslab/qoi) for 3ds Max.
 
-Install the latest [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe).
-
 Download [the latest version of the QOI Bitmap I/O Plugin](https://github.com/kaetemi/qoi-max/releases/latest).
 
 Install `qoi.bmi` into `C:\Program Files\Autodesk\3ds Max 20XX\Plugins`.
