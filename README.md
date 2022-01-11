@@ -6,4 +6,4 @@ Download [the latest version of the QOI Bitmap I/O Plugin](https://github.com/ka
 
 Install `qoi.bmi` into `C:\Program Files\Autodesk\3ds Max 20XX\Plugins`.
 
-![Screenshot of the image selection dialog, showing a thumbnail of a rendered teapot test image.](https://cdn.kaetemi.be/dl/git/qoi_teapot.png)
+![Screenshot of the image selection dialog, showing a thumbnail of a rendered teapot test image.](https://cdn.kaetemi.be/dl/git/qoi_select_teapot.png)
